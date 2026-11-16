@@ -1,7 +1,7 @@
 // One shared selection state. Every view reads it, writes to it through
 // update(), and is redrawn when it changes.
 
-const defaults = () => ({
+export const defaults = () => ({
   page: 'overview', // 'overview' | 'disease' | 'gene'
 
   // --- filters (left panel) ---
@@ -37,9 +37,10 @@ export function update(patch) {
   listeners.forEach((fn) => fn(state));
 }
 
-/** Reset filters and selections but stay on the current page. */
+/** Reset the filters of the left panel. Selections are kept: the selection bar clears those. */
 export function reset() {
-  update({ ...defaults(), page: state.page });
+  const d = defaults();
+  update({ signs: d.signs, minFreq: d.minFreq, levels: d.levels, onset: d.onset, inheritance: d.inheritance, prevClass: d.prevClass, need: d.need });
 }
 
 export function toggled(list, value) {
@@ -51,6 +52,7 @@ export function activeFilterCount() {
   const s = state;
   return (
     s.signs.length +
+    (s.minFreq === 1 ? 0 : 1) +
     (s.levels.length === 1 && s.levels[0] === 1 ? 0 : 1) +
     (s.onset.length ? 1 : 0) +
     (s.inheritance.length ? 1 : 0) +

@@ -8,10 +8,14 @@ BMI 706 visualization project, Group 7 (Haozhe Yao, Haolin Wan, Junhan Yang, Jer
 
 **Live app:** https://hyao8.github.io/706_prototype/ (served by GitHub Pages from `main`)
 
+**Release:** [`v0.1`](https://github.com/hyao8/706_prototype/releases/tag/v0.1), the prototype used in the user
+study. The study tasks and their expected answers are in [`docs/study_plan.md`](docs/study_plan.md).
+
 ## What it does
 
-The header holds one search box (diseases, genes, clinical signs), three page tabs and the data release label.
-A filter panel on the left is the same on every page.
+The header holds three page tabs, one search box (diseases, genes, clinical signs; press `/` to jump to it) and a
+**Guide** button that explains the pages, the colours and the scores. A filter panel on the left is the same on
+every page.
 
 | Task (Step 2) | Where |
 | --- | --- |
@@ -21,6 +25,19 @@ A filter panel on the left is the same on every page.
 | T4 Filter diseases by clinical sign frequency | Filter panel: signs + minimum frequency; Overview: ranked candidates |
 | T5 Compare the signs that distinguish related diseases | Disease: sign comparison matrix |
 | T6 Compare prevalence distributions across specialties | Overview: one 100% stacked bar per specialty |
+
+Things that work the same way on every page:
+
+- **Selection bar.** A bar under the header always lists what is selected (specialty, disease, comparison set,
+  gene). Each item has a remove button, and the bar shows how many entries match the filters.
+- **Shareable address.** The page, the filters and the selection are written to the address bar. The browser's
+  Back and Forward buttons step through the views, and a copied address reopens the same view.
+- **Compare tray.** Ticking diseases in the candidate list opens a tray at the bottom of the page; its button
+  opens the sign comparison matrix for the ticked diseases.
+- **Summary tiles.** The Overview starts with a row of key numbers (how many disorders in view have a known
+  prevalence, a linked gene, clinical signs). The Disease and Gene pages start with the key facts of the selection.
+- **Keyboard.** Chart rows, overlap columns, graph nodes and list rows can be reached with Tab and activated with
+  Enter or Space.
 
 ## Run it locally
 
@@ -65,11 +82,13 @@ src/data.js                         load once, build indices; filtering, scoring
    v
 src/state.js                        one shared state; views read it and write to it through update()
    v
-src/main.js                         shell (header, search, selection bar); redraws the current page
+src/url.js                          writes the state to the address (#page?key=value) and reads it back
+src/main.js                         shell (header, search, selection bar, guide); redraws the current page
 src/filters.js                      left filter panel
 src/views/overview.js               specialty bars, overlap matrix, prevalence bars, candidate list
 src/views/disease.js                disease profile, sign comparison matrix
 src/views/gene.js                   ranked genes, bipartite graph / matrix, specialty bars
+src/util.js                         DOM helper, icons, tooltip, autocomplete, colour scales
 ```
 
 - **No server.** The processed data is about 1 MB gzipped, so the browser loads all of it and filters in memory.
@@ -80,7 +99,9 @@ src/views/gene.js                   ranked genes, bipartite graph / matrix, spec
   a specialty row scopes the candidate list; ticking candidates fills the comparison matrix; clicking a gene symbol
   anywhere opens the Gene page on that gene; clicking a disease there returns to its profile.
 - **Stack.** Plain JavaScript (ES modules), [D3](https://d3js.org/) for scales and SVG, [Vite](https://vite.dev/)
-  as the build tool. Deployed as a static site by `.github/workflows/deploy.yml`.
+  as the build tool. Deployed as a static site by `.github/workflows/deploy.yml` on every push to `main`.
+  Pushing a `v*` tag runs `.github/workflows/release.yml`, which builds the site and publishes a GitHub Release
+  with the built site attached.
 
 ## Design decisions worth knowing
 
@@ -98,20 +119,23 @@ src/views/gene.js                   ranked genes, bipartite graph / matrix, spec
   the midpoints of the HPO frequency classes (Obligate 1, Very frequent 0.9, Frequent 0.55, Occasional 0.17,
   Very rare 0.025). The score, the matched count and one shaded square per sign are shown next to every candidate.
 - **Colour.** 35 specialties are too many for colour, so colour is used only for selection (orange), sign frequency
-  (blue ramp) and prevalence class (viridis).
+  (blue ramp) and prevalence class (viridis). Missing data is grey. The rest of the interface is neutral.
+- **State in the address.** The address holds the state (`#gene?gene=FBN1&d=558&signs=...`), so a moderator can
+  send a participant a link to an exact view, and Back undoes the last navigation step.
 
 ## Known limitations of the prototype
 
 - Grouping signs by body system (planned for the overview) is not implemented yet.
 - Functional consequences are not used, and prevalence geography is only listed in the profile's source records.
-- Designed for desktop screens of 1280 px and wider.
-- The state is not stored in the URL beyond the page tab.
+- Designed for desktop screens of 1280 px and wider. Narrower screens get a stacked layout that works but was
+  not tuned.
 
 ## Third-party libraries
 
 | Library | Version | License | Used for |
 | --- | --- | --- | --- |
 | [d3](https://github.com/d3/d3) | 7.9.2 | ISC | scales, SVG rendering |
+| [@fontsource-variable/inter](https://github.com/fontsource/font-files) | 5.3.0 | OFL-1.1 | the Inter typeface, bundled with the app (no font CDN) |
 | [vite](https://github.com/vitejs/vite) | 8.3.8 | MIT | dev server and build (dev dependency) |
 | [lxml](https://github.com/lxml/lxml) | 6.1.3 | BSD-3-Clause | XML parsing in the data pipeline |
 

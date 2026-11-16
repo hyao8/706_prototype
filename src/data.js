@@ -48,6 +48,10 @@ export async function loadData() {
   D = {
     meta: raw.meta, vocab: raw.vocab, specialties, genes, signs, diseases,
     signByTerm: new Map(signs.map((s) => [s.term, s.idx])),
+    // stable identifiers, used to keep the state in the URL
+    signById: new Map(signs.map((s) => [s.id, s.idx])),
+    diseaseByCode: new Map(diseases.map((d) => [d.code, d.idx])),
+    geneBySymbol: new Map(genes.map((g) => [g.symbol, g.idx])),
     topGenes: [...genes].sort((a, b) => b.diseases.length - a.diseases.length || a.symbol.localeCompare(b.symbol)),
   };
   return D;
