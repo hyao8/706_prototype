@@ -1,0 +1,7 @@
+node_modules/
+dist/
+.venv/
+__pycache__/
+# Raw Orphadata XML (about 200 MB); fetch it with scripts/download_data.py
+data/raw/
+.claude/
