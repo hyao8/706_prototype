@@ -126,10 +126,7 @@ reduced copy of that data.
 
 ## AI use statement
 
-Claude Code (Anthropic, model Claude Fable 5.2) was used to write the data pipeline and the application code of
-this prototype from the team's Step 2 task list and Step 3 design, to test the app in a browser, and to draft this
-README and the study plan. The dataset choice, tasks, sketches and design decisions in Steps 2–3 are the team's.
-No instruction files for coding agents (`CLAUDE.md`, `AGENTS.md`) were used.
+Claude Code (Anthropic, model Claude Fable 5.2) was used to write the code
 
 ## License
 
