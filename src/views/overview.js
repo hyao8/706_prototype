@@ -14,33 +14,39 @@ let lastListKey = '';
 export function renderOverview(root) {
   const matching = getMatching();
   const list = matching.filter((m) => inSpecialtySelection(m.d));
-  root.append(...[statTiles(list), specialtyPanel(matching), candidatePanel(list), compareTray()].filter(Boolean));
+  root.append(...[summaryStrip(list), specialtyPanel(matching), candidatePanel(list), compareTray()].filter(Boolean));
 }
 
-// -------------------------------------------------------------- key figures
+// ------------------------------------------------------------------ summary
 
-/** Five figures about the diseases currently in view (filters + specialty selection). */
-function statTiles(list) {
+/**
+ * How many diseases are in view (filters + specialty selection) and, as four
+ * bars on one 0–100% axis, what share of them has each kind of data.
+ */
+function summaryStrip(list) {
   const n = list.length;
   const base = getBase().length;
   const noun = state.levels.length === 1 && state.levels[0] === 1 ? 'disorders' : 'entries';
   const count = (test) => list.reduce((k, m) => k + (test(m.d) ? 1 : 0), 0);
-  const tile = (iconName, label, value, sub, frac, title) => h('div', { class: 'stat', title },
-    h('div', { class: 'stat-label' }, icon(iconName, 14), label),
-    h('div', { class: 'stat-value' }, value),
-    h('div', { class: 'stat-sub' }, sub),
-    h('div', { class: 'meter' }, h('i', { style: `width:${Math.round((frac || 0) * 1000) / 10}%` })));
-  const share = (iconName, label, k, title) =>
-    tile(iconName, label, n ? pct(k / n) : '–', n ? `${fmt(k)} of ${fmt(n)}` : 'nothing in view', n ? k / n : 0, title);
+  const row = (label, k, title) => h('div', { class: 'share-row', title },
+    h('span', { class: 'share-label' }, label),
+    h('span', { class: 'share-track' }, h('i', { style: `width:${n ? Math.round((k / n) * 1000) / 10 : 0}%` })),
+    h('span', { class: 'share-pct' }, n ? pct(k / n) : '–'),
+    h('span', { class: 'share-n' }, n ? fmt(k) : ''));
 
-  return h('div', { class: 'stats' },
-    tile('list', `${noun[0].toUpperCase()}${noun.slice(1)} in view`, fmt(n),
-      `of ${fmt(base)} ${noun}${state.specialties.length ? ' · specialty selected' : ''}`, base ? n / base : 0,
-      'Entries that pass the filters and the specialty selection. The figures on the right describe this set.'),
-    share('people', 'Prevalence known', count((d) => d.pc >= 0), 'Share with a prevalence class. The rest is unknown or has no epidemiology record.'),
-    share('gene', 'With a linked gene', count((d) => d.gs.length > 0), 'Share with at least one gene association.'),
-    share('signs', 'With clinical signs', count((d) => d.signs.size > 0), 'Share with at least one annotated clinical sign (HPO term).'),
-    share('layers', 'In several specialties', count((d) => d.specs.length > 1), 'Share that belongs to more than one medical specialty.'));
+  return h('section', { class: 'summary' },
+    h('div', { class: 'summary-head', title: 'Entries that pass the filters and the specialty selection. The bars describe this set.' },
+      h('div', { class: 'summary-n' }, h('strong', {}, fmt(n)), `${noun} in view`),
+      h('div', { class: 'summary-sub' }, `of ${fmt(base)} ${noun}${state.specialties.length ? ' · specialty selected' : ''}`)),
+    h('div', { class: 'shares' },
+      h('div', { class: 'share-row share-head' },
+        h('span', {}, `Share of these ${noun} with`),
+        h('span', { class: 'share-ticks' }, h('span', {}, '0%'), h('span', {}, '50%'), h('span', {}, '100%')),
+        h('span', {}), h('span', {})),
+      row('a prevalence class', count((d) => d.pc >= 0), 'Share with a prevalence class. The rest is unknown or has no epidemiology record.'),
+      row('a linked gene', count((d) => d.gs.length > 0), 'Share with at least one gene association.'),
+      row('clinical signs', count((d) => d.signs.size > 0), 'Share with at least one annotated clinical sign (HPO term).'),
+      row('more than one specialty', count((d) => d.specs.length > 1), 'Share that belongs to more than one medical specialty.')));
 }
 
 // ------------------------------------------------- specialties + prevalence

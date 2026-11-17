@@ -216,8 +216,8 @@ export function autocomplete(input, search, opts = {}) {
 // Colour is kept for data: selection (orange), sign frequency (one blue ramp)
 // and prevalence class (viridis). Everything else is neutral.
 export const ACCENT = '#e8590c';
-export const MARK = '#54627f';
-export const MARK_SOFT = '#e3e7ef';
+export const MARK = '#43639c';
+export const MARK_SOFT = '#d6e3f5';
 // Frequency classes, light (very rare) to dark (obligate). Index 0 = excluded.
 // The lightest step still stands off a white cell, so "very rare" never reads
 // as "not annotated".

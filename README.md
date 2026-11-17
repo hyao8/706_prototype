@@ -34,8 +34,9 @@ Things that work the same way on every page:
   Back and Forward buttons step through the views, and a copied address reopens the same view.
 - **Compare tray.** Ticking diseases in the candidate list opens a tray at the bottom of the page; its button
   opens the sign comparison matrix for the ticked diseases.
-- **Summary tiles.** The Overview starts with a row of key numbers (how many disorders in view have a known
-  prevalence, a linked gene, clinical signs). The Disease and Gene pages start with the key facts of the selection.
+- **Summary.** The Overview starts with the number of disorders in view and four bars on one 0–100% axis (the
+  share with a prevalence class, a linked gene, clinical signs, more than one specialty). The Disease and Gene
+  pages start with a plain row of key facts about the selection.
 - **Keyboard.** Chart rows, overlap columns, graph nodes and list rows can be reached with Tab and activated with
   Enter or Space.
 

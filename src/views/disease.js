@@ -111,21 +111,21 @@ function profilePanel(d) {
   return panel;
 }
 
-/** The answers people look for first, as one row of figures. */
+/** The answers people look for first, as one plain row of label / value pairs. */
 function keyFacts(d) {
-  const fact = (iconName, label, value, sub, swatch) => h('div', { class: 'fact' },
-    h('div', { class: 'stat-label' }, icon(iconName, 14), label),
+  const fact = (label, value, sub, swatch) => h('div', { class: 'fact' },
+    h('div', { class: 'stat-label' }, label),
     h('div', { class: 'fact-value', title: typeof value === 'string' ? value : '' }, swatch ? h('i', { class: 'swatch', style: `background:${swatch}` }) : null, value),
     h('div', { class: 'stat-sub', title: sub }, sub));
   const names = (list, vocab, max) => (list.length > max ? `${list.length} categories` : list.map((i) => vocab[i]).join(', '));
   const frequent = [...d.signs.values()].filter((f) => f >= 4).length;
   const symbols = d.gs.slice(0, 3).map((g) => D.genes[g].symbol).join(', ');
   return h('div', { class: 'facts' },
-    fact('people', 'Prevalence class', prevLabel(d.pc), d.pc >= 0 ? d.pb : d.pc === -1 ? 'records exist, none gives a class' : 'no epidemiology record', prevColor(d.pc)),
-    fact('clock', 'Age of onset', d.onset.length ? names(d.onset, D.vocab.onset, 2) : 'No data', d.onset.length > 2 ? d.onset.map((i) => D.vocab.onset[i]).join(', ') : d.onset.length ? 'typical age at first signs' : 'not recorded'),
-    fact('inherit', 'Inheritance', d.inh.length ? names(d.inh, D.vocab.inheritance, 1) : 'No data', d.inh.length > 1 ? d.inh.map((i) => D.vocab.inheritance[i]).join(', ') : d.inh.length ? 'mode of inheritance' : 'not recorded'),
-    fact('gene', 'Genes', fmt(d.gs.length), d.gs.length ? `${symbols}${d.gs.length > 3 ? ` +${d.gs.length - 3}` : ''}` : d.level === 1 ? 'none recorded; see subtypes' : 'none recorded'),
-    fact('signs', 'Clinical signs', fmt(d.signs.size), d.signs.size ? `${frequent} very frequent or obligate` : 'none annotated'));
+    fact('Prevalence class',prevLabel(d.pc), d.pc >= 0 ? d.pb : d.pc === -1 ? 'records exist, none gives a class' : 'no epidemiology record', prevColor(d.pc)),
+    fact('Age of onset',d.onset.length ? names(d.onset, D.vocab.onset, 2) : 'No data', d.onset.length > 2 ? d.onset.map((i) => D.vocab.onset[i]).join(', ') : d.onset.length ? 'typical age at first signs' : 'not recorded'),
+    fact('Inheritance',d.inh.length ? names(d.inh, D.vocab.inheritance, 1) : 'No data', d.inh.length > 1 ? d.inh.map((i) => D.vocab.inheritance[i]).join(', ') : d.inh.length ? 'mode of inheritance' : 'not recorded'),
+    fact('Genes', fmt(d.gs.length), d.gs.length ? `${symbols}${d.gs.length > 3 ? ` +${d.gs.length - 3}` : ''}` : d.level === 1 ? 'none recorded; see subtypes' : 'none recorded'),
+    fact('Clinical signs', fmt(d.signs.size), d.signs.size ? `${frequent} very frequent or obligate` : 'none annotated'));
 }
 
 function block(iconName, title, ...children) {

@@ -129,8 +129,8 @@ function genePanels() {
 
 /** Name, locus and the figures people ask about first. */
 function heroPanel(gene, diseases, groups, coAll, links) {
-  const fact = (iconName, label, value, sub) => h('div', { class: 'fact' },
-    h('div', { class: 'stat-label' }, icon(iconName, 14), label),
+  const fact = (label, value, sub) => h('div', { class: 'fact' },
+    h('div', { class: 'stat-label' }, label),
     h('div', { class: 'fact-value', title: typeof value === 'string' ? value : '' }, value),
     h('div', { class: 'stat-sub', title: sub }, sub));
   const levels = [1, 2, 0].map((l) => [diseases.filter((d) => d.level === l).length, LEVEL_SHORT[l].toLowerCase()])
@@ -148,10 +148,10 @@ function heroPanel(gene, diseases, groups, coAll, links) {
         h('h1', { class: 'symbol' }, gene.symbol),
         h('p', { class: 'sub' }, h('span', {}, gene.name), gene.locus ? h('span', {}, `Locus ${gene.locus}`) : null))),
     h('div', { class: 'facts four' },
-      fact('disease', 'Diseases linked', fmt(diseases.length), levels),
-      fact('check', 'Disease-causing', fmt(causal), causal === diseases.length ? 'germline, in every linked disease' : `germline, of ${diseases.length} linked diseases`),
-      fact('layers', 'Main specialties', fmt(named.length), topSpec ? `most in ${topSpec}` : 'no main specialty recorded'),
-      fact('link', 'Related genes', fmt(coAll.length), coAll.length ? `share a disease: ${co}${coAll.length > 3 ? ` +${coAll.length - 3}` : ''}` : 'no other gene shares its diseases')));
+      fact('Diseases linked', fmt(diseases.length), levels),
+      fact('Disease-causing', fmt(causal), causal === diseases.length ? 'germline, in every linked disease' : `germline, of ${diseases.length} linked diseases`),
+      fact('Main specialties', fmt(named.length), topSpec ? `most in ${topSpec}` : 'no main specialty recorded'),
+      fact('Related genes', fmt(coAll.length),coAll.length ? `share a disease: ${co}${coAll.length > 3 ? ` +${coAll.length - 3}` : ''}` : 'no other gene shares its diseases')));
 }
 
 function bipartite(gene, genes, groups, ordered, links, outside) {
